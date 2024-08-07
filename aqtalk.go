@@ -115,6 +115,7 @@ var (
 )
 
 // 開発者ライセンスキーを設定する
+// 不正なキーでもエラーとならないことがあるが、制限は解除されない
 func SetDevKey(key string) error {
 	devKey := C.CString(key)
 	isOK := C.AquesTalk_SetDevKey(devKey)
@@ -122,5 +123,17 @@ func SetDevKey(key string) error {
 		return nil
 	} else {
 		return fmt.Errorf("invalid development key")
+	}
+}
+
+// 利用者ライセンスキーを設定する
+// 不正なキーでもまれにエラーとならないことがあるが、ライセンス無しのままとなる
+func SetUsrKey(key string) error {
+	usrKey := C.CString(key)
+	isOK := C.AquesTalk_SetUsrKey(usrKey)
+	if isOK == 0 {
+		return nil
+	} else {
+		return fmt.Errorf("invalid user key")
 	}
 }
