@@ -1,9 +1,12 @@
 package aqtalkgo
 
 import (
+	// #cgo CFLAGS: -I/usr/local/include
+	// #cgo LDFLAGS: -L/usr/lib
 	// #include "AquesTalk.h"
 	"C"
 )
+import "fmt"
 
 type PARAM struct {
 	// 基本素片
@@ -110,3 +113,14 @@ var (
 		180,
 	}
 )
+
+// 開発者ライセンスキーを設定する
+func SetDevKey(key string) error {
+	devKey := C.CString(key)
+	isOK := C.AquesTalk_SetDevKey(devKey)
+	if isOK == 0 {
+		return nil
+	} else {
+		return fmt.Errorf("invalid development key")
+	}
+}
