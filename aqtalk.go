@@ -13,6 +13,8 @@ import (
 	"unsafe"
 )
 
+// TODO: Convert between C struct and Go struct
+/*
 type PARAM struct {
 	// 基本素片
 	Base VoiceBase
@@ -35,6 +37,7 @@ type PARAM struct {
 	// 50 <= Fsc <= 200 default: 100
 	Fsc int
 }
+*/
 
 // 基本素片
 type VoiceBase int
