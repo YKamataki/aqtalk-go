@@ -4,9 +4,14 @@ import (
 	// #cgo CFLAGS: -I/usr/local/include
 	// #cgo LDFLAGS: -L/usr/lib
 	// #include "AquesTalk.h"
+	// typedef struct _AQTK_PARAM_ VOICESPEC;
 	"C"
 )
-import "fmt"
+
+import (
+	"fmt"
+	"unsafe"
+)
 
 type PARAM struct {
 	// 基本素片
@@ -43,75 +48,19 @@ const (
 // プリセットの声質
 var (
 	// 女性1
-	PresetVoiceF1 PARAM = PARAM{
-		VoiceBaseF1E,
-		100,
-		100,
-		100,
-		100,
-		100,
-		100,
-	}
+	PresetVoiceF1 = C.gVoice_F1
 	// 女性2
-	PresetVoiceF2 PARAM = PARAM{
-		VoiceBaseF2E,
-		100,
-		100,
-		77,
-		150,
-		100,
-		100,
-	}
+	PresetVoiceF2 = C.gVoice_F2
 	// 女性3
-	PresetVoiceF3 PARAM = PARAM{
-		VoiceBaseF1E,
-		80,
-		100,
-		100,
-		100,
-		61,
-		148,
-	}
+	PresetVoiceF3 = C.gVoice_F3
 	// 男性1
-	PresetVoiceM1 PARAM = PARAM{
-		VoiceBaseF1E,
-		80,
-		100,
-		100,
-		100,
-		61,
-		148,
-	}
+	PresetVoiceM1 = C.gVoice_M1
 	// 男性2
-	PresetVoiceM2 PARAM = PARAM{
-		VoiceBaseM1E,
-		100,
-		100,
-		30,
-		100,
-		100,
-		100,
-	}
+	PresetVoiceM2 = C.gVoice_M2
 	// ロボット1
-	PresetVoiceR1 PARAM = PARAM{
-		VoiceBaseM1E,
-		105,
-		100,
-		45,
-		130,
-		120,
-		100,
-	}
+	PresetVoiceR1 = C.gVoice_R1
 	// ロボット2
-	PresetVoiceR2 PARAM = PARAM{
-		VoiceBaseF2E,
-		70,
-		100,
-		50,
-		50,
-		50,
-		180,
-	}
+	PresetVoiceR2 = C.gVoice_R2
 )
 
 // 開発者ライセンスキーを設定する
@@ -136,4 +85,22 @@ func SetUsrKey(key string) error {
 	} else {
 		return fmt.Errorf("invalid user key")
 	}
+}
+
+// 音声を合成する
+// 音声記号列はUTF-8でエンコードされている必要がある
+// 戻り値: WAVフォーマットの音声データ
+func Synthe(pparam *C.VOICESPEC, koe string) ([]byte, error) {
+	size := C.int(0)
+	wav := C.AquesTalk_Synthe_Utf8(pparam, C.CString(koe), &size)
+	if size == 0 {
+		return nil, fmt.Errorf("failed to synthe")
+	}
+	ptr := unsafe.Pointer(wav)
+	wavgo := (*[]byte)(ptr)
+
+	// free
+	defer C.AquesTalk_FreeWave(wav)
+
+	return *wavgo, nil
 }
