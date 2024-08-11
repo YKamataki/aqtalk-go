@@ -2,6 +2,7 @@ package aqtalkgo
 
 import (
 	// #include "AquesTalk.h"
+	// typedef struct _AQTK_PARAM_ VOICESPEC;
 	"C"
 )
 
