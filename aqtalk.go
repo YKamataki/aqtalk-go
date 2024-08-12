@@ -1,6 +1,7 @@
 package aqtalkgo
 
 import (
+	// #cgo LDFLAGS: -lAquesTalk10
 	// #include "AquesTalk.h"
 	// typedef struct _AQTK_PARAM_ VOICESPEC;
 	"C"
